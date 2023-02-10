@@ -400,7 +400,7 @@ class NovalAiStoryPlugins(Plugin):
         person_id = kwargs['launcher_id']
         person_msg = kwargs['text_message']
         # 是否覆盖draw指令
-        draw_cmd = "^nov|^约稿|^绘画|^draw"
+        draw_cmd = "^绘画\x20|^draw\x20"
         # 如果该人(群)开启了NovelAi故事模式
         if person_id in novel_status:
             # 获取接下来需要使用到的各个参数
@@ -437,35 +437,49 @@ class NovalAiStoryPlugins(Plugin):
             sender_id = kwargs.get("sender_id")
             launcher_id = kwargs.get("launcher_id")
             launcher_type = kwargs.get("launcher_type")
-            # 处理指令
-            person_msg += "\x20"
-            lite_cmds = re.findall(r"(-.)\x20(.*?)\x20", person_msg)
-            long_cmds = re.findall(r"(--.*?)\x20(.*?)\x20", person_msg)
-            try:
-                bad_tag = re.findall(r"(negative prompt):\x20(.*?)\x20", person_msg)[0]
-            except IndexError:
-                bad_tag = ("-u", None)
-            tag = re.sub(
-                "{}{}".format(draw_cmd, "|(-.)\x20(.*?)\x20|(--.*?)\x20(.*?)\x20|(negative\x20prompt):\x20(.*?)\x20"),
-                "",
-                person_msg)
-            # 提纯
-            tag = re.sub("^\x20+|\x20+$", "", tag)
-            for cc in long_cmds:
-                lite_cmds.append(cc)
-            lite_cmds.append(bad_tag)
-            asyncio.run(NovelAiImage().process_mod(tag, lite_cmds, sender_id, novel_config=self.novel_config))
-            # md5读取图片并发送
-            hash_md5 = hashlib.md5()
-            hash_md5.update("{}{}".format(str(sender_id), tag).encode("utf-8"))
-            img_md5 = hash_md5.hexdigest()
-            mirai_img = mirai.Image(path="novelai-{}-img.png".format(img_md5))
-            if launcher_type == "group":
-                host_event.send_group_message(launcher_id, mirai_img)
+            # 判断是否是帮助信息
+            if re.match("^绘画$|^绘.*?[助p]$|^d.*?[助p]$", person_msg):
+                help_msg = """欢迎使用QChatGPT NovelAi插件
+用法：
+1、使用draw或者绘画来进行绘画
+2、更多使用方法{参考}此处：
+https://bot.novelai.dev/usage.html
+3、学习NovelAi元素宝典！
+https://docs.qq.com/doc/DWHl3am5Zb05QbGVs
+如果你喜欢本插件，欢迎 star ~
+https://github.com/dominoar/QCP-NovelAi"""
+                event.add_return("reply", help_msg)
             else:
-                host_event.send_person_message(launcher_id, mirai_img)
-            os.remove("novelai-{}-img.png".format(img_md5))
-        event.prevent_default()
+                # 处理指令
+                person_msg += "\x20"
+                lite_cmds = re.findall(r"(-.)\x20(.*?)\x20", person_msg)
+                long_cmds = re.findall(r"(--.*?)\x20(.*?)\x20", person_msg)
+                try:
+                    bad_tag = re.findall(r"(negative prompt):\x20(.*?)\x20", person_msg)[0]
+                except IndexError:
+                    bad_tag = ("-u", None)
+                tag = re.sub(
+                    "{}{}".format(draw_cmd,
+                                  "|(-.)\x20(.*?)\x20|(--.*?)\x20(.*?)\x20|(negative\x20prompt):\x20(.*?)\x20"),
+                    "",
+                    person_msg)
+                # 提纯
+                tag = re.sub("^\x20+|\x20+$", "", tag)
+                for cc in long_cmds:
+                    lite_cmds.append(cc)
+                lite_cmds.append(bad_tag)
+                asyncio.run(NovelAiImage().process_mod(tag, lite_cmds, sender_id, novel_config=self.novel_config))
+                # md5读取图片并发送
+                hash_md5 = hashlib.md5()
+                hash_md5.update("{}{}".format(str(sender_id), tag).encode("utf-8"))
+                img_md5 = hash_md5.hexdigest()
+                mirai_img = mirai.Image(path="novelai-{}-img.png".format(img_md5))
+                if launcher_type == "group":
+                    host_event.send_group_message(launcher_id, mirai_img)
+                else:
+                    host_event.send_person_message(launcher_id, mirai_img)
+                os.remove("novelai-{}-img.png".format(img_md5))
+                event.prevent_default()
 
     @on(GroupCommandSent)
     @on(PersonCommandSent)
@@ -508,7 +522,7 @@ class NovalAiStoryPlugins(Plugin):
                     event.add_return("reply", ["你是不是傻(￣.￣),这一级指令只有[reset|start|stop]可用哦~"])
             else:
                 event.add_return("reply", ["用法：!story [reset(重置会话) start(开启故事模式) stop(关闭故事模式)]"])
-        event.prevent_default()
+            event.prevent_default()
 
     # 下面是数据库操作
     def _set_db_content(self, person_id, context):
