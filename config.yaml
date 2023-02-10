@@ -1,8 +1,8 @@
 account:
   # 你的NovelAi用户账号
-  user: "duominuoaier@gmail.com"
+  user: ""
   # 你的NovelAi用户密码
-  password: "rW2sc4k_dxAey@a"
+  password: ""
 
 #故事设置
 story:
@@ -34,9 +34,9 @@ Translate:
   # 百度翻译
   baidu:
     # 你的百度翻译ApiKeys
-    apikey: "l8xgn220B2qlHYAXMZeoVQE2"
+    apikey: ""
     # 你百度翻译的secretKey
-    api_secret: "N41hwqN8xXsGKZaskLXDMWThcpgRogma"
+    api_secret: ""
 
   google:
     # google免费翻译接口，可能需要代理，这种翻译方式比较缓慢，亦或随时可能不太稳定，但是依然可以用
