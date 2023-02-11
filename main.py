@@ -165,7 +165,7 @@ def get_novel_size(cmd: str, novel_config: dict) -> dict:
         size = NovelAiImage.novel_model_dict.get(cmd)
     if size:
         return {"novel_size": size}
-    return {"novel_size": ImageResolution.Large_Landscape}
+    return {"novel_size": ImageResolution.Normal_Landscape}
 
 
 def get_novel_bad_tag(tag: str, novel_config: dict) -> dict:
@@ -432,54 +432,53 @@ class NovalAiStoryPlugins(Plugin):
                 event.add_return("reply", reply)
             event.prevent_default()
         # NovelAi图片绘画
-        if re.match(draw_cmd, person_msg):
-            host_event: PluginHost = kwargs.get("host")
-            sender_id = kwargs.get("sender_id")
-            launcher_id = kwargs.get("launcher_id")
-            launcher_type = kwargs.get("launcher_type")
-            # 判断是否是帮助信息
-            if re.match("^绘画$|^绘.*?[助p]$|^d.*?[助p]$", person_msg):
-                help_msg = """欢迎使用QChatGPT NovelAi插件
+        elif re.match("^绘画$|^绘.*?帮助$|^d.*?help$", person_msg):
+            help_msg = """欢迎使用QChatGPT NovelAi插件
 用法：
-1、使用draw或者绘画来进行绘画
+1、使用绘画或draw者来进行绘画
 2、更多使用方法{参考}此处：
 https://bot.novelai.dev/usage.html
 3、学习NovelAi元素宝典！
 https://docs.qq.com/doc/DWHl3am5Zb05QbGVs
 如果你喜欢本插件，欢迎 star ~
 https://github.com/dominoar/QCP-NovelAi"""
-                event.add_return("reply", help_msg)
+            event.add_return("reply", [help_msg])
+            event.prevent_default()
+        elif re.match(draw_cmd, person_msg):
+            host_event: PluginHost = kwargs.get("host")
+            sender_id = kwargs.get("sender_id")
+            launcher_id = kwargs.get("launcher_id")
+            launcher_type = kwargs.get("launcher_type")
+            # 判断是否是帮助信息
+            person_msg += "\x20"
+            lite_cmds = re.findall(r"(-.)\x20(.*?)\x20", person_msg)
+            long_cmds = re.findall(r"(--.*?)\x20(.*?)\x20", person_msg)
+            try:
+                bad_tag = re.findall(r"(negative prompt):\x20(.*?)\x20", person_msg)[0]
+            except IndexError:
+                bad_tag = ("-u", None)
+            tag = re.sub(
+                "{}{}".format(draw_cmd,
+                              "|(-.)\x20(.*?)\x20|(--.*?)\x20(.*?)\x20|(negative\x20prompt):\x20(.*?)\x20"),
+                "",
+                person_msg)
+            # 提纯
+            tag = re.sub("^\x20+|\x20+$", "", tag)
+            for cc in long_cmds:
+                lite_cmds.append(cc)
+            lite_cmds.append(bad_tag)
+            asyncio.run(NovelAiImage().process_mod(tag, lite_cmds, sender_id, novel_config=self.novel_config))
+            # md5读取图片并发送
+            hash_md5 = hashlib.md5()
+            hash_md5.update("{}{}".format(str(sender_id), tag).encode("utf-8"))
+            img_md5 = hash_md5.hexdigest()
+            mirai_img = mirai.Image(path="novelai-{}-img.png".format(img_md5))
+            if launcher_type == "group":
+                host_event.send_group_message(launcher_id, mirai_img)
             else:
-                # 处理指令
-                person_msg += "\x20"
-                lite_cmds = re.findall(r"(-.)\x20(.*?)\x20", person_msg)
-                long_cmds = re.findall(r"(--.*?)\x20(.*?)\x20", person_msg)
-                try:
-                    bad_tag = re.findall(r"(negative prompt):\x20(.*?)\x20", person_msg)[0]
-                except IndexError:
-                    bad_tag = ("-u", None)
-                tag = re.sub(
-                    "{}{}".format(draw_cmd,
-                                  "|(-.)\x20(.*?)\x20|(--.*?)\x20(.*?)\x20|(negative\x20prompt):\x20(.*?)\x20"),
-                    "",
-                    person_msg)
-                # 提纯
-                tag = re.sub("^\x20+|\x20+$", "", tag)
-                for cc in long_cmds:
-                    lite_cmds.append(cc)
-                lite_cmds.append(bad_tag)
-                asyncio.run(NovelAiImage().process_mod(tag, lite_cmds, sender_id, novel_config=self.novel_config))
-                # md5读取图片并发送
-                hash_md5 = hashlib.md5()
-                hash_md5.update("{}{}".format(str(sender_id), tag).encode("utf-8"))
-                img_md5 = hash_md5.hexdigest()
-                mirai_img = mirai.Image(path="novelai-{}-img.png".format(img_md5))
-                if launcher_type == "group":
-                    host_event.send_group_message(launcher_id, mirai_img)
-                else:
-                    host_event.send_person_message(launcher_id, mirai_img)
-                os.remove("novelai-{}-img.png".format(img_md5))
-                event.prevent_default()
+                host_event.send_person_message(launcher_id, mirai_img)
+            os.remove("novelai-{}-img.png".format(img_md5))
+            event.prevent_default()
 
     @on(GroupCommandSent)
     @on(PersonCommandSent)
@@ -535,10 +534,10 @@ https://github.com/dominoar/QCP-NovelAi"""
         context = re.sub('"', '“', context)
         context = re.sub("'", '”', context)
         sql = """
-            UPDATE novel_content
-            SET content = '%s' , datatime = %s
-            WHERE person_id = '%s';
-            """ % (context, int(time.time()), person_id)
+                UPDATE novel_content
+                SET content = '%s' , datatime = %s
+                WHERE person_id = '%s';
+                """ % (context, int(time.time()), person_id)
         self.cursor.execute(sql)
         self.sqlite.commit()
 
@@ -550,8 +549,8 @@ https://github.com/dominoar/QCP-NovelAi"""
         :param launcher_type: 消息源自于(私聊/群组)
         """
         select_sql = """
-            SELECT content FROM novel_content WHERE person_id = %s;
-            """ % person_id
+                SELECT content FROM novel_content WHERE person_id = %s;
+                """ % person_id
         contents = self.cursor.execute(select_sql)
         context = contents.fetchone()
         if context:
@@ -563,8 +562,8 @@ https://github.com/dominoar/QCP-NovelAi"""
             person_msg = re.sub('"', '“', person_msg)
             person_msg = re.sub("'", '”', person_msg)
             crete_sql = """
-            INSERT INTO novel_content (person_id, content,type,datatime) VALUES (%s,'%s','%s',%s)
-            """ % (person_id, person_msg, launcher_type, int(time.time()))
+                INSERT INTO novel_content (person_id, content,type,datatime) VALUES (%s,'%s','%s',%s)
+                """ % (person_id, person_msg, launcher_type, int(time.time()))
             self.cursor.execute(crete_sql)
             self.sqlite.commit()
             return person_msg
@@ -572,16 +571,16 @@ https://github.com/dominoar/QCP-NovelAi"""
     def _delete_db_timeout(self):
         """删除超过20分钟的数据"""
         delete_sql = """
-            DELETE FROM novel_content WHERE datatime < %s
-            """ % (int(time.time()) - 1200)
+                DELETE FROM novel_content WHERE datatime < %s
+                """ % (int(time.time()) - 1200)
         self.cursor.execute(delete_sql)
         self.sqlite.commit()
 
     def _reset_all_db_session(self):
         """删除所有数据库会话"""
         delete_sql = """
-            DELETE FROM novel_content WHERE TRUE
-            """
+                DELETE FROM novel_content WHERE TRUE
+                """
         self.cursor.execute(delete_sql)
         self.sqlite.commit()
 
@@ -591,8 +590,8 @@ https://github.com/dominoar/QCP-NovelAi"""
         :param launcher_id: 发送消息的人(群)的号码
         """
         delete_sql = """
-            DELETE FROM novel_content WHERE person_id = %s
-            """ % launcher_id
+                DELETE FROM novel_content WHERE person_id = %s
+                """ % launcher_id
         self.cursor.execute(delete_sql)
         self.sqlite.commit()
 
@@ -605,14 +604,13 @@ https://github.com/dominoar/QCP-NovelAi"""
 
 # 全局函数
 
-
 def baiduTranslate(novel_config, translate_text, flag=1) -> str:
     """
-    :param translate_text: 待翻译的句子，字数小于2000
-    :param flag: 1:英文->中文; 0:中文->英文;
-    :param novel_config: novelAI配置文件
-    :return: 成功：返回服务器结果。失败：返回服务器失败原因。
-    """
+        :param translate_text: 待翻译的句子，字数小于2000
+        :param flag: 1:英文->中文; 0:中文->英文;
+        :param novel_config: novelAI配置文件
+        :return: 成功：返回服务器结果。失败：返回服务器失败原因。
+        """
     baidu_trans_conf = novel_config.get('Translate').get('baidu')
     api_key = baidu_trans_conf.get('apikey')
     api_secret = baidu_trans_conf.get('api_secret')
