@@ -159,8 +159,8 @@ def get_novel_size(cmd: str, novel_config: dict) -> dict:
     :return: dict{"novel_size":预设大小}
     """
     # 预设大小或者是指定了大小
-    if re.search("\dx\d", cmd):
-        size = re.findall("(\d+)x(\d+)", cmd)[0]
+    if re.search(r"\dx\d", cmd):
+        size = re.findall(r"(\d+)x(\d+)", cmd)[0]
     else:
         size = NovelAiImage.novel_model_dict.get(cmd)
     if size:

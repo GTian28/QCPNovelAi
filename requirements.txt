@@ -49,3 +49,4 @@ wcwidth
 wrapt
 yarl
 zipp
+pyYAML
