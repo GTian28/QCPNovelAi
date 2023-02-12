@@ -3,9 +3,9 @@ from typing import List, Union
 
 import tokenizers
 
-from plugins.NovelAi.novelai_api.ImagePreset import ImageModel
-from plugins.NovelAi.novelai_api.Preset import Model
-from plugins.NovelAi.novelai_api.tokenizers.simple_tokenizer import SimpleTokenizer
+from plugins.QCPNovelAi.novelai_api.ImagePreset import ImageModel
+from plugins.QCPNovelAi.novelai_api.Preset import Model
+from plugins.QCPNovelAi.novelai_api.tokenizers.simple_tokenizer import SimpleTokenizer
 
 AnyModel = Union[Model, ImageModel]
 

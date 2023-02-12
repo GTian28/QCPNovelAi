@@ -11,9 +11,9 @@ import argon2
 from nacl.exceptions import CryptoError
 from nacl.secret import SecretBox
 
-from plugins.NovelAi.novelai_api.Keystore import Keystore
-from plugins.NovelAi.novelai_api.Preset import Model, Preset
-from plugins.NovelAi.novelai_api.Tokenizer import Tokenizer
+from plugins.QCPNovelAi.novelai_api.Keystore import Keystore
+from plugins.QCPNovelAi.novelai_api.Preset import Model, Preset
+from plugins.QCPNovelAi.novelai_api.Tokenizer import Tokenizer
 
 # boilerplate
 NoneType: type = type(None)

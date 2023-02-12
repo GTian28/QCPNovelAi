@@ -1,7 +1,7 @@
 from typing import Any, Dict, Iterable, List, Union
 
-from plugins.NovelAi.novelai_api.Preset import Model
-from plugins.NovelAi.novelai_api.utils import tokenize_if_not
+from plugins.QCPNovelAi.novelai_api.Preset import Model
+from plugins.QCPNovelAi.novelai_api.utils import tokenize_if_not
 
 
 class BiasGroup:

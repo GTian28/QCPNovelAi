@@ -1,8 +1,8 @@
 from typing import Any, Dict
 
-from plugins.NovelAi.novelai_api.BiasGroup import BiasGroup
-from plugins.NovelAi.novelai_api.Preset import Model
-from plugins.NovelAi.novelai_api.Tokenizer import Tokenizer
+from plugins.QCPNovelAi.novelai_api.BiasGroup import BiasGroup
+from plugins.QCPNovelAi.novelai_api.Preset import Model
+from plugins.QCPNovelAi.novelai_api.Tokenizer import Tokenizer
 
 
 class GlobalSettings:

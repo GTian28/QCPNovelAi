@@ -6,7 +6,7 @@ from uuid import uuid4
 from nacl.secret import SecretBox
 from nacl.utils import random
 
-from plugins.NovelAi.novelai_api.SchemaValidator import SchemaValidator
+from plugins.QCPNovelAi.novelai_api.SchemaValidator import SchemaValidator
 
 
 class Keystore:

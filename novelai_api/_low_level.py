@@ -7,12 +7,12 @@ from urllib.parse import quote, urlencode
 from aiohttp import ClientSession
 from aiohttp.client_reqrep import ClientResponse
 
-from plugins.NovelAi.novelai_api.ImagePreset import ImageModel
-from plugins.NovelAi.novelai_api.NovelAIError import NovelAIError
-from plugins.NovelAi.novelai_api.Preset import Model
-from plugins.NovelAi.novelai_api.SchemaValidator import SchemaValidator
-from plugins.NovelAi.novelai_api.Tokenizer import Tokenizer
-from plugins.NovelAi.novelai_api.utils import NoneType, assert_len, assert_type, tokens_to_b64
+from plugins.QCPNovelAi.novelai_api.ImagePreset import ImageModel
+from plugins.QCPNovelAi.novelai_api.NovelAIError import NovelAIError
+from plugins.QCPNovelAi.novelai_api.Preset import Model
+from plugins.QCPNovelAi.novelai_api.SchemaValidator import SchemaValidator
+from plugins.QCPNovelAi.novelai_api.Tokenizer import Tokenizer
+from plugins.QCPNovelAi.novelai_api.utils import NoneType, assert_len, assert_type, tokens_to_b64
 
 
 # === INTERNALS === #

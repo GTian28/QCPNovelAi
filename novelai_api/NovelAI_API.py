@@ -7,8 +7,8 @@ from aiohttp import BasicAuth, ClientSession, ClientTimeout
 from aiohttp.typedefs import StrOrURL
 from multidict import CIMultiDict
 
-from plugins.NovelAi.novelai_api._high_level import HighLevel
-from plugins.NovelAi.novelai_api._low_level import LowLevel
+from plugins.QCPNovelAi.novelai_api._high_level import HighLevel
+from plugins.QCPNovelAi.novelai_api._low_level import LowLevel
 
 
 class NovelAIAPI:

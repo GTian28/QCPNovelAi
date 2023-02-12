@@ -8,6 +8,7 @@
 import asyncio
 import hashlib
 import json
+import logging
 import os
 import re
 import sqlite3
@@ -23,14 +24,14 @@ from aiohttp import ClientSession
 
 from pkg.plugin.host import PluginHost, EventContext
 from pkg.plugin.models import *
-from plugins.NovelAi.novelai_api.BanList import BanList
-from plugins.NovelAi.novelai_api.BiasGroup import BiasGroup
-from plugins.NovelAi.novelai_api.GlobalSettings import GlobalSettings
-from plugins.NovelAi.novelai_api.ImagePreset import ImageModel, ImagePreset, ImageResolution, ImageSampler, UCPreset
-from plugins.NovelAi.novelai_api.NovelAI_API import NovelAIAPI
-from plugins.NovelAi.novelai_api.Preset import Model, Preset
-from plugins.NovelAi.novelai_api.Tokenizer import Tokenizer
-from plugins.NovelAi.novelai_api.utils import get_encryption_key, b64_to_tokens
+from plugins.QCPNovelAi.novelai_api.BanList import BanList
+from plugins.QCPNovelAi.novelai_api.BiasGroup import BiasGroup
+from plugins.QCPNovelAi.novelai_api.GlobalSettings import GlobalSettings
+from plugins.QCPNovelAi.novelai_api.ImagePreset import ImageModel, ImagePreset, ImageResolution, ImageSampler, UCPreset
+from plugins.QCPNovelAi.novelai_api.NovelAI_API import NovelAIAPI
+from plugins.QCPNovelAi.novelai_api.Preset import Model, Preset
+from plugins.QCPNovelAi.novelai_api.Tokenizer import Tokenizer
+from plugins.QCPNovelAi.novelai_api.utils import get_encryption_key, b64_to_tokens
 
 
 class API:
@@ -42,15 +43,16 @@ class API:
     api: Optional[NovelAIAPI]
 
     def __init__(self):
-        config_dict = yaml.load(open(f'{os.getcwd()}/plugins/QCP-NovelAi/config.yaml', mode='r', encoding='utf-8').read(),
-                                yaml.CLoader)
+        config_dict = yaml.load(
+            open(f'{os.getcwd()}/plugins/QCPNovelAi/config.yaml', mode='r', encoding='utf-8').read(),
+            yaml.CLoader)
 
         self._username = config_dict['account']['user']
         self._password = config_dict['account']['password']
         if self._username is None or self._password is None:
-            raise RuntimeError("QCP-NovelAi：账号或密码错误，账号或密码不能为空，且必须为字符串")
+            raise RuntimeError("QCPNovelAi：账号或密码错误，账号或密码不能为空，且必须为字符串")
         if self._username == "" or self._password == "":
-            raise RuntimeError("QCP-NovelAi：账号或密码错误，账号或密码不能为空")
+            raise RuntimeError("QCPNovelAi：账号或密码错误，账号或密码不能为空")
 
         self.logger = Logger("NovelAI")
         self.logger.addHandler(StreamHandler())
@@ -86,11 +88,12 @@ class NovelAiStory:
 
     def __init__(self):
         # 读取配置文件
-        logging.debug("QCP-NovelAi：开始读取配置文件")
+        logging.debug("QCPNovelAi：开始读取配置文件")
         try:
             this_path = os.getcwd()
-            config_dict = yaml.load(open(f'{this_path}/plugins/QCP-NovelAi/config.yaml', mode='r', encoding='utf-8').read(),
-                                    yaml.CLoader)
+            config_dict = yaml.load(
+                open(f'{this_path}/plugins/QCPNovelAi/config.yaml', mode='r', encoding='utf-8').read(),
+                yaml.CLoader)
             self.username = config_dict['account']['user']
             self.password = config_dict['account']['password']
             self.mode = config_dict['story']['mode']
@@ -98,7 +101,7 @@ class NovelAiStory:
             self.banlist = config_dict['story']['banlist']
         except Exception:
             traceback.print_exc()
-            raise RuntimeError("QCP-NovelAi：读取文件失败，请检查配置文件是否正确")
+            raise RuntimeError("QCPNovelAi：读取文件失败，请检查配置文件是否正确")
 
     async def process_mod(self, massage):
         """入口函数"""
@@ -272,20 +275,20 @@ class NovelAiImage:
     }
 
     def __init__(self):
-        logging.debug("[QCP-NovelAi]: 正在读取配置文件……")
+        logging.debug("[QCPNovelAi]: 正在读取配置文件……")
         # 创建图片保存路径
         this_file_path = os.getcwd()
-        self.img_save_path = "{}/plugins/QCP-NovelAi/novel-image".format(this_file_path)
+        self.img_save_path = "{}/plugins/QCPNovelAi/novel-image".format(this_file_path)
         try:
             os.mkdir(self.img_save_path)
         except FileExistsError:
             pass
         # 读取配置文件
-        with open(this_file_path + '/plugins/QCP-NovelAi/config.yaml', 'r', encoding='utf-8') as conf_yaml:
+        with open(this_file_path + '/plugins/QCPNovelAi/config.yaml', 'r', encoding='utf-8') as conf_yaml:
             config_yaml = yaml.load(conf_yaml.read(), yaml.CLoader)
             self.username = config_yaml.get("account").get("user")
             self.password = config_yaml.get("account").get("password")
-        logging.debug("[QCP-NovelAi]: 读取配置文件完成！")
+        logging.debug("[QCPNovelAi]: 读取配置文件完成！")
 
     async def process_mod(self, tag: str, param_list: list, sender_id: int, novel_config: dict) -> None:
         """插件入口
@@ -364,7 +367,7 @@ class NovelAiImage:
 novel_status = []
 
 
-@register(name="欢迎使用基于QChatGPT的NovelAi插件(*^▽^*)", description="#", version="v0.1.2",
+@register(name="QCPNovelAi", description="#", version="v0.1.2",
           author="多米诺艾尔(Dominoar　&　ドミノァイエ!)")
 class NovalAiStoryPlugins(Plugin):
     sqlite = None
@@ -372,9 +375,18 @@ class NovalAiStoryPlugins(Plugin):
 
     def __init__(self, plugin_host: PluginHost):
         asyncio.set_event_loop(asyncio.new_event_loop())
-        # 加载配置文件
-        with open(f'{os.getcwd()}/plugins/QCP-NovelAi/config.yaml', mode='r', encoding='UTF-8') as novel_conf_file:
-            self.novel_config = yaml.load(novel_conf_file.read(), yaml.CLoader)
+        try:
+            # 加载配置文件
+            with open(f'{os.getcwd()}/plugins/QCPNovelAi/config.yaml', mode='r', encoding='UTF-8') as novel_conf_file:
+                self.novel_config = yaml.load(novel_conf_file.read(), yaml.CLoader)
+                novel_conf_file.close()
+            # 写出插件配置文件
+            with open(f"{os.getcwd()}/plugins/switch.json", mode="r", encoding="UTF-8") as switch_file:
+                switch_json: dict = json.loads(switch_file.read())
+                if switch_json.get("QCPNovelAi") is None:
+                    os.remove(f"{os.getcwd()}/plugins/switch.json")
+        except Exception:
+            traceback.print_exc()
         # 创建novel故事Ai
         self.novel_story = NovelAiStory()
         # 创建异步loop
@@ -467,6 +479,7 @@ https://github.com/dominoar/QCP-NovelAi"""
             for cc in long_cmds:
                 lite_cmds.append(cc)
             lite_cmds.append(bad_tag)
+            logging.info("[绘画]→ 正在生成图片~")
             asyncio.run(NovelAiImage().process_mod(tag, lite_cmds, sender_id, novel_config=self.novel_config))
             # md5读取图片并发送
             hash_md5 = hashlib.md5()
@@ -597,9 +610,12 @@ https://github.com/dominoar/QCP-NovelAi"""
 
     # 插件卸载时触发
     def __del__(self):
-        self.async_loop.close()
-        self.cursor.close()
-        self.sqlite.close()
+        try:
+            self.async_loop.close()
+            self.cursor.close()
+            self.sqlite.close()
+        except Exception:
+            pass
 
 
 # 全局函数
@@ -640,7 +656,7 @@ def baiduTranslate(novel_config, translate_text, flag=1) -> str:
     resp_json = json.loads(resp.content)
     if resp_json.get('error_code'):
         logging.error(
-            f"[QCP-NovelAi]: 百度翻译错误，错误码：{resp_json.get('error_code')}，错误信息：{resp_json.get('error_msg')}")
+            f"[QCPNovelAi]: 百度翻译错误，错误码：{resp_json.get('error_code')}，错误信息：{resp_json.get('error_msg')}")
     return resp_json.get('result').get('trans_result')[0].get('dst')
 
 
@@ -673,7 +689,7 @@ def googleTranslate(novel_config, translate_text, flag=1) -> str:
             t = (translator.translate([f"{translate_text}", "."], dest=language_dest))
         except Exception as e:
             t += 1
-            logging.warning(f"[QCP-NovelAi]: 谷歌第{t}次翻译错误：{e}\n[QCP-NovelAi]: 正在尝试第{t + 1}次")
+            logging.warning(f"[QCPNovelAi]: 谷歌第{t}次翻译错误：{e}\n[QCPNovelAi]: 正在尝试第{t + 1}次")
         if type(t) is not int or t > max_number:
             break
     return t[0].text
@@ -692,6 +708,6 @@ def translate_chinese_check(trans_choice, translate_text, flag, novel_config) ->
     elif re.match('^google|^谷歌', trans_choice):
         en_trans_msg = googleTranslate(novel_config, translate_text, flag)
     else:
-        logging.warning("[QCP-NovelAi]: 无法获取到你选择的翻译,默认为你使用谷歌翻译")
+        logging.warning("[QCPNovelAi]: 无法获取到你选择的翻译,默认为你使用谷歌翻译")
         en_trans_msg = NovalAiStoryPlugins.googleTranslate(novel_config, translate_text, flag)
     return en_trans_msg

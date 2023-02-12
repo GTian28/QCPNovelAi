@@ -3,15 +3,15 @@ from json import dumps, loads
 from time import time
 from typing import Any, Dict, Iterable, Iterator, List, NoReturn, Optional, Union
 
-from plugins.NovelAi.novelai_api import NovelAI_API
-from plugins.NovelAi.novelai_api.BanList import BanList
-from plugins.NovelAi.novelai_api.BiasGroup import BiasGroup
-from plugins.NovelAi.novelai_api.GlobalSettings import GlobalSettings
-from plugins.NovelAi.novelai_api.Idstore import Idstore
-from plugins.NovelAi.novelai_api.Keystore import Keystore
-from plugins.NovelAi.novelai_api.Preset import Model, Preset
-from plugins.NovelAi.novelai_api.Tokenizer import Tokenizer
-from plugins.NovelAi.novelai_api.utils import b64_to_tokens, decrypt_user_data, encrypt_user_data
+from plugins.QCPNovelAi.novelai_api import NovelAI_API
+from plugins.QCPNovelAi.novelai_api.BanList import BanList
+from plugins.QCPNovelAi.novelai_api.BiasGroup import BiasGroup
+from plugins.QCPNovelAi.novelai_api.GlobalSettings import GlobalSettings
+from plugins.QCPNovelAi.novelai_api.Idstore import Idstore
+from plugins.QCPNovelAi.novelai_api.Keystore import Keystore
+from plugins.QCPNovelAi.novelai_api.Preset import Model, Preset
+from plugins.QCPNovelAi.novelai_api.Tokenizer import Tokenizer
+from plugins.QCPNovelAi.novelai_api.utils import b64_to_tokens, decrypt_user_data, encrypt_user_data
 
 
 def _get_time() -> int:

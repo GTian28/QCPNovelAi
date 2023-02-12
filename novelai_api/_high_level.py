@@ -2,14 +2,14 @@ import base64
 from hashlib import sha256
 from typing import Any, AsyncIterable, Dict, Iterable, List, Optional, Tuple, Union
 
-from plugins.NovelAi.novelai_api.BanList import BanList
-from plugins.NovelAi.novelai_api.BiasGroup import BiasGroup
-from plugins.NovelAi.novelai_api.GlobalSettings import GlobalSettings
-from plugins.NovelAi.novelai_api.ImagePreset import ImageModel, ImagePreset
-from plugins.NovelAi.novelai_api.Keystore import Keystore
-from plugins.NovelAi.novelai_api.NovelAIError import NovelAIError
-from plugins.NovelAi.novelai_api.Preset import Model, Preset
-from plugins.NovelAi.novelai_api.utils import assert_type, compress_user_data, encrypt_user_data, get_access_key
+from plugins.QCPNovelAi.novelai_api.BanList import BanList
+from plugins.QCPNovelAi.novelai_api.BiasGroup import BiasGroup
+from plugins.QCPNovelAi.novelai_api.GlobalSettings import GlobalSettings
+from plugins.QCPNovelAi.novelai_api.ImagePreset import ImageModel, ImagePreset
+from plugins.QCPNovelAi.novelai_api.Keystore import Keystore
+from plugins.QCPNovelAi.novelai_api.NovelAIError import NovelAIError
+from plugins.QCPNovelAi.novelai_api.Preset import Model, Preset
+from plugins.QCPNovelAi.novelai_api.utils import assert_type, compress_user_data, encrypt_user_data, get_access_key
 
 
 class HighLevel:
