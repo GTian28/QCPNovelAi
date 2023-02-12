@@ -9,7 +9,7 @@ story:
   # 故事讲述者型号，可以到官网了解模型区别
   # "Krake" "Sigurd" "Euterpe"
   mode: "Euterpe"
-  # 每次对话故事生成文本长度(NovelAi Story为英文，经过翻译为中文)
+  # 每次对话故事生成文本长度(QCP-NovelAi Story为英文，经过翻译为中文)
   text_length: 100
   # 屏蔽词列表
   banlist: [ "傻逼","白痴","二货" ]
