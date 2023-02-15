@@ -540,7 +540,7 @@ https://github.com/dominoar/QCP-NovelAi"""
                 event.add_return("reply", ["用法：!story [reset(重置会话) start(开启故事模式) stop(关闭故事模式)]"])
             event.prevent_default()
 
-    # 下面是数据库操作
+    # 下面是数据库操作#
     def _set_db_content(self, person_id, context):
         if len(context) > 8000:  # context不能超过8000个字符,否则重置到4000
             context = context[4000:]

@@ -1,8 +1,8 @@
 account:
   # 你的NovelAi用户账号
-  user: ""
+  user: "?"
   # 你的NovelAi用户密码
-  password: ""
+  password: "?"
 
 #故事设置
 story:
