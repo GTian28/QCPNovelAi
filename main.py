@@ -476,6 +476,9 @@ https://github.com/dominoar/QCP-NovelAi"""
                 person_msg)
             # 提纯
             tag = re.sub("^\x20+|\x20+$", "", tag)
+            # 翻译？
+            if self.novel_config.get("image").get("translate_bool") and re.search(r"[\u4E00-\u9FA5]", tag):
+                tag = translate_chinese_check(self.novel_config["Translate"]["your_choice"], tag, 0, self.novel_config)
             for cc in long_cmds:
                 lite_cmds.append(cc)
             lite_cmds.append(bad_tag)
@@ -486,6 +489,7 @@ https://github.com/dominoar/QCP-NovelAi"""
             hash_md5.update("{}{}".format(str(sender_id), tag).encode("utf-8"))
             img_md5 = hash_md5.hexdigest()
             mirai_img = mirai.Image(path="novelai-{}-img.png".format(img_md5))
+            logging.info("[绘画]→ 图片生成完成~")
             if launcher_type == "group":
                 host_event.send_group_message(launcher_id, mirai_img)
             else:
@@ -676,9 +680,9 @@ def googleTranslate(novel_config, translate_text, flag=1) -> str:
         max_number = 10
     # 判断中英文
     if flag:
-        language_dest = 'en'
-    else:
         language_dest = 'zh-cn'
+    else:
+        language_dest = 'en'
     # 翻译处理
     t = 0
     if max_number is None:
@@ -686,7 +690,7 @@ def googleTranslate(novel_config, translate_text, flag=1) -> str:
     # 请求翻译，直到成功或超出max_number
     while True:
         try:
-            t = (translator.translate([f"{translate_text}", "."], dest=language_dest))
+            t = (translator.translate([translate_text, "."], dest=language_dest))
         except Exception as e:
             t += 1
             logging.warning(f"[QCPNovelAi]: 谷歌第{t}次翻译错误：{e}\n[QCPNovelAi]: 正在尝试第{t + 1}次")

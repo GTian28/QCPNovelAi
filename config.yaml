@@ -19,6 +19,9 @@ story:
   language: "zh"
 
 image:
+  # 是否开启翻译？
+  # 默认True (True/False)
+  translate_bool: True
   # 是否覆盖原有的draw指令？
   # (True/False) 默认 False
   overwrite_draw: False
