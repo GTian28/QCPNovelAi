@@ -33,7 +33,6 @@ platformdirs
 pluggy
 pycares
 pycparser
-pygoogletranslation
 pylint
 pynacl
 pyrsistent
@@ -52,6 +51,7 @@ yarl
 zipp
 pyyaml
 aiohttp
+pygoogletranslation==2.0.6
 googletrans==4.0.0-rc1
 argon2-cffi~=21.3.0
 httpcore~=0.16.3
