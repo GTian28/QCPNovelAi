@@ -33,6 +33,7 @@ platformdirs
 pluggy
 pycares
 pycparser
+pygoogletranslation
 pylint
 pynacl
 pyrsistent
