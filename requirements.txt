@@ -49,11 +49,11 @@ wcwidth
 wrapt
 yarl
 zipp
-pyYAML
+pyyaml
 aiohttp
-argon2-cffi = ^21.3.0
-PyNaCl = ^1.5.0
-jsonschema = ^4.17.0
-tokenizers = ^0.13.1
-ftfy = ^6.1.1
-regex = ^2022.10.31
+argon2-cffi~=21.3.0
+PyNaCl~=1.5.0
+jsonschema~=4.17.0
+tokenizers~=0.13.1
+ftfy~=6.1.1
+regex~=2022.10.31
