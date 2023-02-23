@@ -1,8 +1,8 @@
-## QChatGPT²å¼þ-NovelAI [¹ÊÊÂÐðÊöÕßÓë»æ»­]
- - »ùÓÚQChatGPT²å¼þ
- - »ùÓÚNovelAI-APIÏîÄ¿
+## QChatGPTæ’ä»¶-NovelAI [æ•…äº‹å™è¿°è€…ä¸Žç»˜ç”»]
+ - åŸºäºŽQChatGPTæ’ä»¶
+ - åŸºäºŽNovelAI-APIé¡¹ç›®
 
-ÔÚÄãµÄÁÄÌì´°¿ÚÊ¹ÓÃ!plugin https://github.com/dominoar/QCP-NovelAi.git À´°²×°±¾²å¼þ
+åœ¨ä½ çš„èŠå¤©çª—å£ä½¿ç”¨!plugin https://github.com/GTian28/QCPNovelAi.git æ¥å®‰è£…æœ¬æ’ä»¶
 
-- Ê¹ÓÃÔ¼¸å£¬»æ»­£¬draw£¬novÀ´»æ»­
-- Ê¹ÓÃ!storyÀ´»ñÈ¡¹ÊÊÂ°ïÖú
+- ä½¿ç”¨çº¦ç¨¿ï¼Œç»˜ç”»ï¼Œdrawï¼Œnovæ¥ç»˜ç”»
+- ä½¿ç”¨!storyæ¥èŽ·å–æ•…äº‹å¸®åŠ©
