@@ -17,6 +17,7 @@ exceptiongroup
 execnet
 frozenlist
 ftfy
+googletrans
 idna
 importlib-metadata
 importlib-resources
