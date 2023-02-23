@@ -52,7 +52,7 @@ yarl
 zipp
 pyyaml
 aiohttp
-googletrans==3.1.0
+googletrans==4.0.0-rc1
 argon2-cffi~=21.3.0
 httpcore~=0.16.3
 PyNaCl~=1.5.0
